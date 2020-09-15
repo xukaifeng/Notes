@@ -1,7 +1,9 @@
 import { defineConfig } from 'dumi';
 
 export default defineConfig({
-  title: 'Site Name',
+  title: 'Notes',
   mode: 'site',
+  description: 'test',
   // more config: https://d.umijs.org/config
+  menus: {},
 });

@@ -11,9 +11,9 @@ nav:
 ### 初始化
 
 ```bash
-$ mkdir Test
-$ cd Test
-$ git init
+mkdir Test
+cd Test
+git init
 ```
 
 <br />执行完 git init 将会在文件夹下产生`.git` 文件夹，用来跟踪管理版本库，默认是隐藏的，可使用`ls -ah`查看到。<br />
@@ -23,8 +23,8 @@ $ git init
 ### 添加文件
 
 ```bash
-$ git add <filename>  或  git add .
-$ git commit -m <message>
+git add <filename>  或  git add .
+git commit -m <message>
 ```
 
 ```
@@ -34,7 +34,7 @@ vi & vim 有两种工作模式：
 （1） 命令模式：接受、执行 vi & vim 操作命令的模式，打开文件后的默认模式；
 （2） 编辑模式：对打开的文件内容进行 增、删、改 操作的模式； 在编辑模式下按下 ESC 键，回退到命令模式。
 
-创建、打开文件：$ vi [filename]
+创建、打开文件：vi [filename]
 （1）使用 vi 加 文件路径（或文件名）的模式打开文件，如果文件存在则打开现有文件，如果文件不存在则新建文件，并			在终端最下面一行显示打开的是一个新文件。
 （2）键盘输入字母 “i”或“Insert”键进入最常用的插入编辑模式。
 
@@ -58,8 +58,8 @@ vi & vim 有两种工作模式：
 ### 查看状态和变更
 
 ```bash
-$ git status  							查看工作区状态
-$ git diff <filename> 			查看工作区该文件与版本库中当前分支上该文件之间的差异
+git status  							查看工作区状态
+git diff <filename> 			查看工作区该文件与版本库中当前分支上该文件之间的差异
 ```
 
 <br />注意`git diff`在`git add`之前使用有效<br />
@@ -69,10 +69,10 @@ $ git diff <filename> 			查看工作区该文件与版本库中当前分支上�
 ### 查看历史记录
 
 ```bash
-$ git log 									查看最近到最远的提交记录
-$ git log --pretty=oneline  查看最近到最远的提交记录,每条显示一行
+git log 									查看最近到最远的提交记录
+git log --pretty=oneline  查看最近到最远的提交记录,每条显示一行
 
-$ git reflog 								查看我们每一次命令
+git reflog 								查看我们每一次命令
 ```
 
 <a name="a9bf971a"></a>
@@ -82,8 +82,8 @@ $ git reflog 								查看我们每一次命令
 <br />Git 必须知道当前版本是哪个版本，在 Git 中，用`HEAD`表示当前版本，上一个版本就是`HEAD^`，上上一个版本就是`HEAD^^`，当然往上 100 个版本写 100 个`^`比较容易数不过来，所以写成`HEAD~100`；<br />
 
 ```bash
-$ git reset --hard HEAD^ 		回退到上一个版本
-$ git reset --hard commitId 回退到指定的commitId
+git reset --hard HEAD^ 		回退到上一个版本
+git reset --hard commitId 回退到指定的commitId
 ```
 
 <br />**git reset 和 git revert 的比较：**
@@ -110,11 +110,11 @@ $ git reset --hard commitId 回退到指定的commitId
 
 ```bash
 # 没有git add
-$ git checkout -- <file>
+git checkout -- <file>
 
 # git add了，还没有commit
-$ git reset HEAD <file>
-$ git checkout -- <file>
+git reset HEAD <file>
+git checkout -- <file>
 ```
 
 <br />
@@ -127,15 +127,15 @@ $ git checkout -- <file>
 <br />在文件管理器中把没用的文件删了，或者用`rm`命令删了。<br />
 
 ```bash
-$ rm filename
+rm filename
 ```
 
 <br />此时 `git status`可查看到你删除的记录。<br />
 <br />确实要从版本库中删除该文件，那就用命令 git rm 删掉，并且 git commit：<br />
 
 ```bash
-$ git rm filename
-$ git commit
+git rm filename
+git commit
 ```
 
 <br />先手动删除文件，然后使用 git rm 和 git add 效果是一样的。<br />
@@ -164,8 +164,8 @@ $ git commit
 <br />修改同一个文件同一地方容易产生冲突<br />
 
 ```bash
-$ git log —graph 								查看分支合并图
-$ git log --graph --pretty=oneline --abbrev-commit
+git log —graph 								查看分支合并图
+git log --graph --pretty=oneline --abbrev-commit
 
 git log --graph --pretty=format:'%Cred%h - %Cgreen[%an]%Creset -%C(yellow)%d%Creset %s %C(yellow)<%cr>%Creset' --abbrev-commit --date=relative
 ```
@@ -173,7 +173,9 @@ git log --graph --pretty=format:'%Cred%h - %Cgreen[%an]%Creset -%C(yellow)%d%Cre
 <br />获取冲突文件名称<br />
 
 ```bash
-$ git ls-files --unmerged
+git ls-files -u | cut -f 2 | sort -u
+设置别名
+git config --global alias.conflicts '!git ls-files -u | cut -f 2 | sort -u'
 ```
 
 <br />[https://jsproxy.ga/-----http://www.voidcn.com/article/p-qbuzqlan-bud.html](https://jsproxy.ga/-----http://www.voidcn.com/article/p-qbuzqlan-bud.html)<br />
@@ -238,7 +240,7 @@ $ git ls-files --unmerged
 <br />如果要强制禁用`Fast forward`模式，Git 就会在 merge 时生成一个新的 commit，这样，从分支历史上就可以看出分支信息。`fast forward`合并就看不出来曾经做过合并。<br />
 
 ```bash
-$ git merge --no-ff -m "merge with no-ff" dev   其中--no-ff表示禁用
+git merge --no-ff -m "merge with no-ff" dev   其中--no-ff表示禁用
 ```
 
 <a name="8247e209"></a>
@@ -246,7 +248,7 @@ $ git merge --no-ff -m "merge with no-ff" dev   其中--no-ff表示禁用
 ### Git 密码更新
 
 ```bash
-$ git config --global --unset user.password
+git config --global --unset user.password
 ```
 
 <br />执行以上命令，当与远程库有交互，会让我们重新输入账号密码<br />
@@ -256,4 +258,5 @@ $ git config --global --unset user.password
 
 ## 参考文档
 
+<br />https://mp.weixin.qq.com/s/oGDzalW3BF57Jg1NpNIfkw  :thumbsup:<br />
 <br />[https://git-scm.com/book/zh/v1/](https://git-scm.com/book/zh/v1/)<br />

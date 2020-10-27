@@ -11,18 +11,19 @@ nav:
 ### 浏览器
 
 - macro-task（宏任务） 大概包括：
-  script（整体代码）
-  setTimeout
-  setInterval
-  setImmediate
-  I / O
-  UI render
+
+  - script（整体代码）
+  - setTimeout
+  - setInterval
+  - setImmediate
+  - I / O
+  - UI render
 
 - micro-task（微任务） 大概包括：
-  process.nextTick
-  Promise.then
-  async / await （等价于 Promise.then）
-  MutationObserver（HTML5 新特性）
+  - process.nextTick
+  - Promise.then
+  - async / await （等价于 Promise.then）
+  - MutationObserver（HTML5 新特性）
 
 **整体顺序**
 
@@ -52,14 +53,14 @@ async 隐式地返回一个 promise，可以看成是是 promise 的语法糖，
 事件循环机制被分成好多个阶段，每个阶段执行特定的任务
 
 - macro-task（宏任务）包括：
-  setTimeout
-  setInterval
-  setImmediate
-  script（整体代码）
-  I / O 操作
+  - setTimeout
+  - setInterval
+  - setImmediate
+  - script（整体代码）
+  - I / O 操作
 - micro-task（微任务）包括：
-  process.nextTick（与普通微任务有区别，在微任务队列执行之前执行）
-  Promise.then 回调
+  - process.nextTick（与普通微任务有区别，在微任务队列执行之前执行）
+  - Promise.then 回调
 
 process.nextTick 是独立于事件循环的任务队列，在每一个事件循环阶段完成后会去检查 nextTick 队列，如果里面有任务，会让这部分任务优先于微任务执行。
 

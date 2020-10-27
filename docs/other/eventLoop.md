@@ -36,17 +36,15 @@ nav:
 
 **浏览器里的时间循环，遇到宏任务，会立即执行对应的微任务队列**
 
-**关于 async / await 执行顺序**
+**关于 async / await 执行顺序** <br/>
 async 隐式地返回一个 promise，可以看成是是 promise 的语法糖，await 后面产生一个微任务
 
 **旧版 chrome：**
-
 ​ 在执行到 await 时，会将 await 后面代码放到本轮循环最后执行；
 
-**新版 chrome**：
-
-​ 分两种情况（优化 await 的运行速度）
-​ 如果 await 后不是异步任务，将 await 后看成是一个微任务
+**新版 chrome**：<br/>
+​ 分两种情况（优化 await 的运行速度）<br/>
+​ 如果 await 后不是异步任务，将 await 后看成是一个微任务<br/>
 ​ 如果 await 后是异步任务，将 await 后面代码放到本轮循环最后执行
 
 ### Node

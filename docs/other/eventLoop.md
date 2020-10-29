@@ -38,15 +38,15 @@ nav:
 **浏览器里的时间循环，遇到宏任务，会立即执行对应的微任务队列**
 
 **关于 async / await 执行顺序** <br/>
-async 隐式地返回一个 promise，可以看成是是 promise 的语法糖，await 后面产生一个微任务
+我们知道  async  会隐式返回一个 Promise 作为结果的函数，那么可以简单理解为：**await 后面的函数在执行完毕后**，await 会产生一个微任务（Promise.then 是微任务）。但是我们要注意微任务产生的时机，它是执行完 await 后，直接跳出 async 函数，执行其他代码（此处就是协程的运作，A 暂停执行，控制权交给 B）。其他代码执行完毕后，再回到 async 函数去执行剩下的代码，然后把 await 后面的代码注册到微任务队列中
 
-**旧版 chrome：**
+**旧版 chrome：** <br/>
 ​ 在执行到 await 时，会将 await 后面代码放到本轮循环最后执行；
 
 **新版 chrome**：<br/>
-​ 分两种情况（优化 await 的运行速度）<br/>
-​ 如果 await 后不是异步任务，将 await 后看成是一个微任务<br/>
-​ 如果 await 后是异步任务，将 await 后面代码放到本轮循环最后执行
+分两种情况（优化 await 的运行速度）<br/>
+如果 await 后不是异步任务，将 await 后看成是一个微任务<br/>
+如果 await 后是异步任务，将 await 后面代码放到本轮循环最后执行
 
 ### Node
 
@@ -64,11 +64,10 @@ async 隐式地返回一个 promise，可以看成是是 promise 的语法糖，
 
 process.nextTick 是独立于事件循环的任务队列，在每一个事件循环阶段完成后会去检查 nextTick 队列，如果里面有任务，会让这部分任务优先于微任务执行。
 
-**Node11 之前：**
+**Node11 之前：** <br/>
+会执行所有的宏任务，再执行微任务，其中 process.nextTick 优先于其他微任务先执行
 
-​ 会执行所有的宏任务，再执行微任务，其中 process.nextTick 优先于其他微任务先执行
-**Node11 ：**
-
+**Node11 ：** <br/>
 ​ 如果是 node11 版本一旦执行一个阶段里的一个宏任务（setTimeout、setInterval、setImmediate）就会立刻执行对应的微任务队列，nextTick 也会优先其他微任务先执行。
 ​ Node11 之后它的特性向浏览器看齐！
 

@@ -1,8 +1,9 @@
 ---
 title: typeOf
-order: 1
+order: 32
 group:
   title: javaScript
+  order: 3
 ---
 
 ## test

@@ -82,3 +82,5 @@ HTML 语义化是反对大篇幅使用无语义化的 div+span+class，而鼓励
 [HTML 元素](https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element)
 
 ## defer 和 async
+
+![Index_01](../../assets/image/html/deferasync.png)

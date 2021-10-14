@@ -1,7 +1,7 @@
 ---
 title: CSS
 order: 2
-toc: menu
+toc: content
 ---
 
 ## 盒模型
@@ -152,7 +152,161 @@ box-sizing:
 
 ## BFC
 
+**块格式化上下文（Block Formatting Context，BFC）**
+
+**BFC 是一个独立的布局环境，BFC 内部的元素布局与外部互不影响**
+
+一个 BFC 的范围包含创建该上下文元素的所有子元素，但**不包括**创建了新 BFC 的子元素的内部元素。这从另一方角度说明，一个元素不能同时存在于两个 BFC 中。两个 BFC 是互相隔离的。
+
+### 触发条件
+
+- 根元素（`<html>）`）
+- 浮动元素（元素的 [`float`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/float) 不是 `none`）
+- 绝对定位元素（元素的 [`position`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/position) 为 `absolute` 或 `fixed`）
+- 行内块元素（元素的 [`display`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/display) 为 `inline-block`）
+- 表格单元格（元素的 [`display`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/display) 为 `table-cell`，HTML 表格单元格默认为该值）
+- 表格标题（元素的 [`display`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/display) 为 `table-caption`，HTML 表格标题默认为该值）
+- 匿名表格单元格元素（元素的 [`display`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/display) 为 `table`、`table-row`、`table-row-group`、`table-header-group`、`table-footer-group`（分别是 HTML table、row、tbody、thead、tfoot 的默认属性）或 `inline-table`）
+- [`overflow`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/overflow) 计算值(Computed)不为 `visible` 的块元素
+- [`display`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/display) 值为 `flow-root` 的元素
+- [`contain`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/contain) 值为 `layout`、`content`或 paint 的元素
+- 弹性元素（[`display`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/display) 为 `flex` 或 `inline-flex`元素的直接子元素）
+- 网格元素（[`display`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/display) 为 `grid` 或 `inline-grid` 元素的直接子元素）
+- 多列容器（元素的 [`column-count`](https://developer.mozilla.org/zh-CN/docs/Web/CSS/column-count) 或 [`column-width` (en-US)](https://developer.mozilla.org/en-US/docs/Web/CSS/column-width) 不为 ` auto，包括 ``column-count ` 为 `1`）
+- `column-span` 为 `all` 的元素始终会创建一个新的 BFC，即使该元素没有包裹在一个多列容器中（[标准变更](https://github.com/w3c/csswg-drafts/commit/a8634b96900279916bd6c505fda88dda71d8ec51)，[Chrome bug](https://bugs.chromium.org/p/chromium/issues/detail?id=709362)）
+
+### 布局规则
+
+- 内部的 Box 会在垂直方向一个接着一个地放置。
+- Box 垂直方向上的距离由 margin 决定。属于同一个 BFC 的两个相邻的 Box 的 margin 会发生重叠。
+- 每个盒子的左外边框紧挨着包含块的左边框，即使浮动元素也是如此。
+- BFC 的区域不会与 float box 重叠。
+- BFC 就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素，反之亦然。
+- 计算 BFC 的高度时，浮动子元素也参与计算。
+
+### 解决的问题
+
+1. 浮动元素的高度塌陷
+2. 上下 margin 重叠问题
+3. 非浮动元素被浮动元素覆盖
+
 ## 居中
+
+### 水平方向
+
+#### 行内元素
+
+```css
+.container {
+  text-align: center;
+}
+```
+
+#### 块状元素
+
+##### 已知宽度
+
+```css
+.container {
+  margin: 0 auto;
+}
+```
+
+##### 未知宽度
+
+```css
+/* 方法1*/
+.container {
+    text-align: center;
+}
+.inline-block {
+    display: inline-block;
+}
+/* 方法2*/
+.flex-center {
+    display: flex;
+    justify-content: center;
+}
+
+/* 方法3 */
+使用定位等方式
+```
+
+### 水平垂直居中
+
+```less
+/* 方法1 已知宽高*/
+.parent {
+  position: relative;
+}
+.child {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -50px;
+  margin-top: -50px;
+}
+
+/* 方法2 已知宽高*/
+.parent {
+  position: relative;
+}
+.child {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+/* 方法3 已知宽高 */
+.parent {
+  position: relative;
+}
+.child {
+  position: absolute;
+  top: calc(50% - 50px);
+  left: calc(50% - 50px);
+}
+
+/* 方法4 未知宽高 */
+.parent {
+  position: relative;
+}
+.child {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 方法5 未知宽高 */
+.parent {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
+.child {
+  display: inline-block;
+}
+
+/* 方法6 未知宽高 */
+.parent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 方法7 未知宽高 */
+.parent {
+  display: grid;
+}
+.child {
+  align-self: center;
+  justify-self: center;
+}
+```
 
 ## 省略号
 

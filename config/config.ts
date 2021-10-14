@@ -11,4 +11,5 @@ export default defineConfig({
     // 设置 alias
     memo.resolve.alias.set('images', '../assets/image');
   },
+  styles: [`body [data-updated-text*='Last'] { display: none; }`],
 });

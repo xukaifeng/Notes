@@ -97,7 +97,13 @@ js 的变量的存储方式--栈（stack）和堆（heap）
   Object.prototype.toString.call(window); // [object global] window 是全局对象 global 的引用
   ```
 
-## 原型链
+## 原型和原型链
+
+- 所有引用类型（函数、数组、对象）都拥有`__proto__`属性（隐式原型）
+- 所有函数拥有`prototype`属性（显式原型）（仅限构造函数）
+- 原型对象：拥有 prototype 属性的对象，在定义函数时被创建
+
+![Index_01](../../assets/image/javaScript/prototype.png)
 
 ## this
 

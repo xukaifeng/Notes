@@ -107,6 +107,11 @@ js 的变量的存储方式--栈（stack）和堆（heap）
 
 ## this
 
+全局下 this 指向 window
+谁调用指向谁
+箭头函数中的 this，取决于其上下文的环境
+使用 call apply bind this 指向参数中新的 this
+
 ## 作用域
 
 ## 闭包

@@ -154,7 +154,7 @@ bar = function(){ // 赋值
 
    执行上下文是 JavaScript 执行一段代码时的运行环境，比如调用一个函数，就会进入这个函数的执行上下文，确定该函数在执行期间用到的诸如 this、变量、对象以及函数等。
 
-   ​ 如果在编译阶段，存在两个相同的函数，那么最终存放在变量环境中的是最后定义的那个，这是因为后定义的会覆盖掉之前定义的。例子说明
+   如果在编译阶段，存在两个相同的函数，那么最终存放在变量环境中的是最后定义的那个，这是因为后定义的会覆盖掉之前定义的。例子说明
 
 2. 执行阶段
 
@@ -186,6 +186,44 @@ function addAll(b, c) {
 }
 addAll(3, 6);
 ```
+
+1. 第一步，创建全局上下文，并将其压入栈底。如下图所示： <img src="../../assets/image/javaScript/stack1-1.png" alt="Index_01" style="zoom:50%;" />
+
+   全局执行上下文压入到调用栈后，JavaScript 引擎便开始执行全局代码了。首先会执行 a=2 的赋值操作，执行该语句会将全局上下文变量环境中 a 的值设置为 2。设置后的全局上下文的状态如下图所示： <img src="https://lewisye.github.io/assets/img/stack1-2.1d50269d.png" alt="img" style="zoom:50%;" />
+
+2. 第二步 调用 addAll 函数 JavaScript 引擎会编译该函数，并为其创建一个执行上下文，最后还将该函数的执行上下文压入栈中，如下图所示：
+
+    <img src="../../assets/image/javaScript/stack2-1.png" alt="Index_01" style="zoom:50%;" />
+
+   addAll 函数的执行上下文创建好之后，便进入了函数代码的执行阶段了，这里先执行的是 d=10 的赋值操作，执行语句会将 addAll 函数执行上下文中的 d 由 undefined 变成了 10。
+
+3. 第三步，当执行到 add 函数 当调用该函数时,同样会为其创建执行上下文，并将其压入调用栈，如下图所示： <img src="../../assets/image/javaScript/stack3-1.png" alt="Index_01" style="zoom:50%;" />
+
+4. 当 add 函数返回时，该函数的执行上下文就会从栈顶弹出，并将 result 的值设置为 add 函数的返回值，也就是 9。如下图所示：
+
+<img src="../../assets/image/javaScript/stack4.png" alt="Index_01" style="zoom:50%;" />
+
+5. 紧接着 addAll 执行最后一个相加操作后并返回，addAll 的执行上下文也会从栈顶部弹出，此时调用栈中就只剩下全局上下文了。最终如下图所示：
+
+ <img src="../../assets/image/javaScript/stack5-1.png" alt="Index_01" style="zoom:50%;" />
+
+至此，整个 JavaScript 流程执行结束了。
+
+#### 如何利用浏览器查看调用栈的信息
+
+这里我们拿上面的那段代码做个演示，你可以打开“开发者工具”，点击“Source”标签，选择 JavaScript 代码的页面，然后在第 3 行加上断点，并刷新页面。你可以看到执行到 add 函数时，执行流程就暂停了，这时可以通过右边“call stack”来查看当前的调用栈的情况，如下图：
+
+ <img src="../../assets/image/javaScript/stacklook.png" alt="Index_01" style="zoom:50%;" />
+
+从图中可以看出，右边的“call stack”下面显示出来了函数的调用关系：栈的最底部是 anonymous，也就是全局的函数入口；中间是 addAll 函数；顶部是 add 函数。这就清晰地反映了函数的调用关系，所以在分析复杂结构代码，或者检查 Bug 时，调用栈都是非常有用的
+
+除了通过断点来查看调用栈，你还可以使用 console.trace() 来输出当前的函数调用关系.
+
+#### 栈溢出（Stack Overflow）
+
+现在你知道了调用栈是一种用来管理执行上下文的数据结构，符合后进先出的规则。不过还有一点你要注意，**调用栈是有大小的**，当入栈的执行上下文超过一定数目，JavaScript 引擎就会报错，我们把这种错误叫做**栈溢出**。
+
+栈溢出抛出的错误信息为：超过了最大栈调用大小（Maximum call stack size exceeded）
 
 ### 作用域
 

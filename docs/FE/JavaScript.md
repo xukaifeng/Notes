@@ -293,7 +293,7 @@ ES6 引入了 **let 和 const**关键字，使 JavaScript 像其他语言一样�
 
 当一个函数执行时，当访问某个变量时，会先在当前定义函数内查找 ，没有查找到向上一层查找。
 
-JS 采用的是词法作用域，所以函数的作用域在函数定义的时候就决定了。这是因为函数有一个内部属性[[scope]], 当函数创建的时候，就会保存所有父变量对象到其中，你可以理解[[scope]]就是所有父变量对象的层级链，但注意[[scope]]并不代表完整的作用域链
+JS 采用的是词法作用域，所以函数的作用域在函数定义的时候就决定了。这是因为函数有一个内部属性[[scope]], 当函数创建的时候，就会保存所有父变量对象到其中，你可以理解[[scope]]就是所有父变量对象的层级链，但注意[[scope]]并不代表完整的作用域链。
 
 ## this
 
@@ -315,13 +315,30 @@ JS 采用的是词法作用域，所以函数的作用域在函数定义的时�
 
    将 null 或者是 undefined 作为 this 的绑定对象传入 call、apply 或者是 bind,这些值在调用时会被忽略，实际应用的是默认绑定规则
 
-箭头函数，箭头函数无法使用上述四条规则，而是根据外层（函数或者全局）作用域（词法作用域）来决定 this。
+5. 箭头函数，箭头函数无法使用上述四条规则，而是根据外层（函数或者全局）作用域（词法作用域）来决定 this。
+
+```javascript
+function foo() {
+  // 返回一个箭头函数
+  return a => {
+    // this继承自foo()
+    console.log(this.a);
+  };
+}
+
+var obj1 = {
+  a: 2,
+};
+
+var obj2 = {
+  a: 3,
+};
+
+var bar = foo.call(obj1);
+bar.call(obj2); // 2，不是3！
+```
 
 优先级：new 绑定 > 显式绑定 > 隐式绑定 > 默认绑定
-
-## 闭包
-
-## 事件循环
 
 ## 浏览器与 node 的事件循环
 
@@ -392,7 +409,219 @@ process.nextTick 是独立于事件循环的任务队列，在每一个事件循
 
 两者主要的区别在于浏览器中的微任务是在每个相应的宏任务中执行的，而 nodejs 中的微任务则是在不同阶段之间执行的。可以理解 node 中存在着优先级的执行顺序
 
-## 继承的方式
+## 继承
+
+### 原型链继承
+
+核心：父类的实例作为子类的原型
+
+```javascript
+function Animal(name) {
+  this.name = name || 'Tom';
+  this.colors = ['red', 'bule'];
+}
+Animal.prototype.sayName = function(food) {
+  return this.name;
+};
+
+function Cat() {}
+Cat.prototype = new Animal(); // 关键
+
+var cat = new Cat();
+
+console.log(cat.sayName); // Tom
+console.log(cat instanceof Animal); // true
+console.log(cat instanceof Cat); // true
+```
+
+优点
+
+1. 非常简单的继承关系，实例是子类的实例，也是父类的实例
+2. 父类新增原型方法/属性，子类都能访问到
+
+缺点
+
+1. 子类型重写超类型中的方法，或者添加超类型中不存在的方法。给原型添加/重写方法的代码一定要放在替换原型的语句之后。
+
+2. 引用类型的属性被所有实例共享
+
+   ```
+   function Animal(name) {
+       this.name = name || 'Tom'
+       this.colors = ['red', 'bule']
+   }
+
+   Animal.prototype.sayName = function() {
+       return this.name
+   }
+
+   var cat1 = new Cat()
+   cat1.colors.push('white')
+   console.log(cat1.colors) // ['red','bule','white']
+
+   var cat2 = new Cat()
+   console.log(cat2.colors) // ['red','bule','white']
+   ```
+
+3. 创建子类实例时，无法向父类构造函数传参
+
+4. 无法实现多继承
+
+### 借用构造函数继承/经典继承
+
+```javascript
+function Animal(name) {
+  this.name = name || 'Tom';
+  this.colors = ['red', 'bule'];
+}
+
+Animal.prototype.sayName = function() {
+  return this.name;
+};
+
+function Cat(name) {
+  Animal.call(this, name); // 可以向父类传参
+}
+var cat1 = new Cat('Tom');
+var cat2 = new Cat('Jack');
+
+cat1.colors.push('white');
+
+console.log(cat1.colors); // ['red','bule','white']
+console.log(cat2.colors); // ['red','bule']
+console.log(cat1.name); // Tom
+console.log(cat2.name); // Jack
+console.log(cat1 instanceof Animal); // false
+console.log(cat1.sayName()); // Uncaught TypeError: cat1.sayName is not a function
+```
+
+优点
+
+1. 避免了引用类型的属性被所有实例共享
+
+2. 可以在 Child 中向 Parent 传参
+3. 可以继承多个父类
+
+缺点
+
+1. 实例是子类实例，不是父类实例 `console.log(cat1 instanceof Animal); // false`
+2. 并没有继承父类原型上的方法 `console.log(cat1.sayName()) // Uncaught TypeError: cat1.sayName is not a function`
+3. 方法都在构造函数中定义，每次创建实例都会创建一遍方法。
+
+### 组合继承
+
+原型链和借用构造函数的组合，思路是使用原型链实现对父类原型属性和方法的继承，而通过借用构造函数来实现对实例属性的继承。
+
+```javascript
+function Animal(name) {
+  this.name = name || 'Tom';
+  this.colors = ['red', 'bule'];
+}
+
+Animal.prototype.sayName = function() {
+  return this.name;
+};
+
+function Cat(name, age) {
+  // 继承属性
+  Animal.call(this, name); //第二次调用Animal() 父类构造器
+  this.age = age;
+}
+
+Cat.prototype = new Animal(); //第一次调用Animal() 父类构造器
+Cat.prototype.constructor = Cat;
+
+// 继承属性
+Cat.prototype.sayAge = function() {
+  return this.age;
+};
+
+var cat1 = new Cat('Jack', 18);
+var cat2 = new Cat('Rose', 19);
+
+cat1.colors.push('white');
+
+console.log(cat1.colors); // ['red','blue','white']
+console.log(cat2.colors); // ['red','blue']
+console.log(cat1.sayName()); // 'Jack'
+console.log(cat2.sayName()); // Rose
+console.log(cat1.sayAge()); // 18
+console.log(cat2.sayAge()); // 19
+```
+
+优点：融合原型链继承和构造函数的优点，是 JavaScript 中最常用的继承模式。
+
+缺点：调用两次父构造函数。
+
+### 原型式继承
+
+借助原型可以基于已有的对象创建新的对象，同时还不必因此创建自定义类型。
+
+```javascript
+function object(o) {
+  function F() {}
+  F.prototype = o;
+  return new F();
+}
+```
+
+ES5 Object.create 的模拟实现，将传入的对象作为创建的对象的原型
+
+缺点
+
+与原型链继承一样, 各个实例中**引用类型的属性值**会共享相应的值
+
+```javascript
+var person = {
+  name: 'Tom',
+  friends: ['Jack', 'Rose'],
+};
+
+var person1 = object(person);
+var person2 = object(person);
+
+person1.name = 'person1';
+console.log(person2.name); // Tom
+
+person1.firends.push('Tisa');
+console.log(person2.friends); // ["Jack", "Rose", "Tisa"]
+```
+
+### 寄生式继承
+
+```javascript
+// 创建一个仅用于封装继承过程的函数，该函数在内部以某种形式来做增强对象，最后返回对象。
+function createObj(o) {
+  var clone = Object.create(o);
+  clone.sayName = function() {
+    console.log('hi');
+  };
+  return clone;
+}
+```
+
+缺点：跟借用构造函数模式一样，每次创建对象都会创建一遍方法。
+
+### 寄生组合式继承
+
+```javascript
+//寄生组合式继承的核心方法s
+function inheritPrototype(subType, superType) {
+  // 继承父类的原型
+  var prototype = Object.create(superType.prototype);
+  // 重写被污染的子类的constructor
+  prototype.constructor = subType;
+  // 重写子类的原型
+  supType.prototype = prototype;
+}
+
+/*
+1. 子类继承了父类的属性和方法，同时，属性没有被创建在原型链上，因此多个子类不会共享同一个属性；
+2. 子类可以传递动态参数给父类；
+3. 父类的构造函数只执行了一次。
+4. 能正常使用 instanceof 和 isPrototypeOf()
+*/
+```
 
 ## 柯里化
 

@@ -589,3 +589,53 @@ align-self 属性允许单个项目有与其他项目不一样的对齐方式，
 设为 Flex 布局后，子元素的 float、clear 和 vertical-align 属性将失效。
 
 ## 其他
+
+### 滚动条自定义
+
+```less
+// 覆盖默认滚动条
+.ant-table-wrapper .ant-table-scroll-horizontal .ant-table-container {
+  .ant-table-body,
+  .ant-table-tbody,
+  .ant-table-content {
+    overflow: overlay !important;
+  }
+
+  &:hover {
+    // ::-webkit-scrollbar-track {
+    //   -webkit-box-shadow: inset 0 0 6px #FAFAFA;
+    // }
+    ::-webkit-scrollbar-thumb {
+      -webkit-box-shadow: inset 0 0 6px rgba(255, 255, 255, 0);
+      background-color: #e5e5e5;
+      &:hover {
+        background-color: rgba(85, 85, 85, 0.4);
+      }
+    }
+  }
+
+  /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  /*定义滚动条轨道 内阴影+圆角*/
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px transparent;
+    background-color: transparent;
+  }
+
+  /* 滚动条的内层滑轨背景颜色 */
+  ::-webkit-scrollbar-track-piece {
+    background-color: transparent;
+  }
+
+  /*定义滑块 内阴影+圆角*/
+  ::-webkit-scrollbar-thumb {
+    border-radius: 8px;
+    -webkit-box-shadow: inset 0 0 6px transparent;
+    background-color: transparent;
+  }
+}
+```
